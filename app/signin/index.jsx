@@ -11,6 +11,7 @@ import { hp, wp } from "../../helpers/common";
 import { theme } from "../../constants/theme";
 import { useRouter } from "expo-router";
 import bgImage from "../../assets/images/food.png";
+import googleLogo from "../../assets/images/google-logo.png";
 import { useState } from "react";
 import axios from "axios";
 
@@ -95,6 +96,15 @@ const SignInScreen = () => {
         </Pressable>
       </View>
 
+      <Pressable style={styles.googleButton} onPress={handleLogin}>
+        <Image
+          style={styles.googleLogo}
+          source={googleLogo}
+          resizeMode="cover"
+        />
+        <Text style={styles.googleText}>Continue with Google</Text>
+      </Pressable>
+
       <Image source={bgImage} style={styles.bgImage} />
     </View>
   );
@@ -151,6 +161,29 @@ const styles = StyleSheet.create({
     fontSize: hp(2),
     fontWeight: theme.fontWeights.semibold,
     letterSpacing: 1,
+  },
+  googleButton: {
+    flexDirection: "row",
+    width: wp(80),
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.colors.white,
+    borderColor: theme.colors.primary,
+    borderWidth: 2,
+    borderRadius: theme.redius.xl,
+    paddingVertical: 10,
+    marginVertical: 10,
+    borderCurve: "continuous",
+  },
+  googleLogo: {
+    height: hp(3),
+    width: hp(3),
+    marginRight: 10,
+  },
+  googleText: {
+    color: theme.colors.neutral(0.9),
+    fontSize: hp(2),
+    letterSpacing: 0.5,
   },
   bgImage: {
     width: wp(100),
