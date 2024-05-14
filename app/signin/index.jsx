@@ -5,31 +5,83 @@ import {
   TextInput,
   Pressable,
   Image,
+  Alert,
 } from "react-native";
 import { hp, wp } from "../../helpers/common";
 import { theme } from "../../constants/theme";
 import { useRouter } from "expo-router";
 import bgImage from "../../assets/images/food.png";
+import { useState } from "react";
+import axios from "axios";
 
 const SignInScreen = () => {
   const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const resetData = () => {
+    setEmail("");
+    setPassword("");
+  };
+
+  const handleLogin = async () => {
+    if (password.length < 6) {
+      Alert.alert("Password must be at least 6 characters");
+      return;
+    }
+
+    if (email.length < 6) {
+      Alert.alert("Email must be at least 6 characters");
+      return;
+    }
+
+    await axios
+      .post("https://sipl-restaurant.vercel.app/api/v1/users/login", {
+        email,
+        password,
+      })
+      .then((res) => {
+        if (res.data.message === "Success") {
+          resetData();
+          router.push("home");
+        }
+      })
+      .catch((error) => {
+        console.log("Error:: register user failed", error);
+        Alert.alert("Invalid email or password");
+      });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign in</Text>
 
-      {["Username", "Password"].map((item) => (
-        <TextInput
-          key={item}
-          placeholder={item}
-          style={styles.userInput}
-          cursorColor={theme.colors.primary}
-        />
-      ))}
+      <TextInput
+        key="email"
+        placeholder="Enter Email"
+        value={email}
+        onChangeText={(value) => setEmail(value)}
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="email-address"
+        style={styles.userInput}
+        cursorColor={theme.colors.primary}
+      />
 
-      <Pressable
-        style={styles.signInButton}
-        onPress={() => router.push("home")}
-      >
+      <TextInput
+        key="password"
+        placeholder="Enter Password"
+        value={password}
+        onChangeText={(value) => setPassword(value)}
+        autoCapitalize="none"
+        autoCorrect={false}
+        secureTextEntry
+        style={styles.userInput}
+        cursorColor={theme.colors.primary}
+      />
+
+      <Pressable style={styles.signInButton} onPress={handleLogin}>
         <Text style={styles.signInText}>Sign in</Text>
       </Pressable>
 

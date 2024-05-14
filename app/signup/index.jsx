@@ -5,32 +5,111 @@ import {
   TextInput,
   Pressable,
   Image,
+  Alert,
 } from "react-native";
 import { hp, wp } from "../../helpers/common";
 import { theme } from "../../constants/theme";
 import { useRouter } from "expo-router";
 import bgImage from "../../assets/images/food.png";
+import { useState } from "react";
+import axios from "axios";
 
 const SignUpScreen = () => {
   const router = useRouter();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordCheck, setPasswordCheck] = useState("");
+
+  const resetData = () => {
+    setFullName("");
+    setEmail("");
+    setPassword("");
+    setPasswordCheck("");
+  };
+
+  const handleRegister = async () => {
+    if (password !== passwordCheck) {
+      Alert.alert("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert("Password must be at least 6 characters");
+      return;
+    }
+
+    if (email.length < 6) {
+      Alert.alert("Email must be at least 6 characters");
+      return;
+    }
+
+    await axios
+      .post("https://sipl-restaurant.vercel.app/api/v1/users/register", {
+        fullName,
+        email,
+        password,
+      })
+      .then(() => {
+        resetData();
+        router.push("home");
+      })
+      .catch((error) => console.log("Error:: register user failed", error));
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign up</Text>
 
-      {["Enter Username", "Enter Password", "Re-enter Password"].map((item) => (
-        <TextInput
-          key={item}
-          placeholder={item}
-          style={styles.userInput}
-          cursorColor={theme.colors.primary}
-        />
-      ))}
+      <TextInput
+        key="fullName"
+        placeholder="Enter Full Name"
+        value={fullName}
+        onChangeText={(value) => setFullName(value)}
+        autoCapitalize="none"
+        autoCorrect={false}
+        style={styles.userInput}
+        cursorColor={theme.colors.primary}
+      />
 
-      <Pressable
-        style={styles.signInButton}
-        onPress={() => router.push("home")}
-      >
-        <Text style={styles.signInText}>Sign in</Text>
+      <TextInput
+        key="email"
+        placeholder="Enter Email"
+        value={email}
+        onChangeText={(value) => setEmail(value)}
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="email-address"
+        style={styles.userInput}
+        cursorColor={theme.colors.primary}
+      />
+
+      <TextInput
+        key="password"
+        placeholder="Enter Password"
+        value={password}
+        onChangeText={(value) => setPassword(value)}
+        autoCapitalize="none"
+        autoCorrect={false}
+        secureTextEntry
+        style={styles.userInput}
+        cursorColor={theme.colors.primary}
+      />
+
+      <TextInput
+        key="passwordCheck"
+        placeholder="Re-enter Password"
+        value={passwordCheck}
+        onChangeText={(value) => setPasswordCheck(value)}
+        autoCapitalize="none"
+        autoCorrect={false}
+        secureTextEntry
+        style={styles.userInput}
+        cursorColor={theme.colors.primary}
+      />
+
+      <Pressable style={styles.signUpButton} onPress={handleRegister}>
+        <Text style={styles.signUpText}>Sign up</Text>
       </Pressable>
 
       <View style={styles.linkContainer}>
@@ -74,7 +153,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.grayBg,
   },
-  signInButton: {
+  signUpButton: {
     width: wp(80),
     alignItems: "center",
     backgroundColor: theme.colors.primary,
@@ -83,7 +162,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderCurve: "continuous",
   },
-  signInText: {
+  signUpText: {
     color: theme.colors.white,
     fontSize: hp(3),
     letterSpacing: 1,
