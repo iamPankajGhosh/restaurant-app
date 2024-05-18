@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-import bgImage from "../assets/images/welcome1.jpeg";
+import bgImage from "../assets/images/splash.jpeg";
 import { wp, hp } from "../helpers/common.js";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown } from "react-native-reanimated";
