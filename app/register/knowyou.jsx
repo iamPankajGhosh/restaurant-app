@@ -18,7 +18,7 @@ import { hp, wp } from "../../helpers/common.js";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import footerBanner from "../../assets/images/footer-banner.png";
 
-const RegisterScreen = () => {
+const KnowYouScreen = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -88,30 +88,18 @@ const RegisterScreen = () => {
       </Animated.Text>
 
       <Animated.Text style={styles.title} entering={FadeInDown.springify()}>
-        Register
+        Know You
       </Animated.Text>
 
       <View style={styles.formContainer}>
         <Animated.View entering={FadeInDown.delay(200).springify()}>
           <TextInput
-            placeholder="Email"
+            placeholder="Name"
             cursorColor={theme.colors.primary}
             style={[styles.userInput]}
-            keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
-            textContentType="emailAddress"
-            autoComplete="email"
-          />
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(200).springify()}>
-          <TextInput
-            placeholder="Password"
-            cursorColor={theme.colors.primary}
-            style={[styles.userInput]}
-            secureTextEntry={true}
-            textContentType="password"
+            textContentType="name"
           />
         </Animated.View>
 
@@ -123,6 +111,21 @@ const RegisterScreen = () => {
             keyboardType="phone-pad"
             textContentType="telephoneNumber"
           />
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(200).springify()}>
+          <TextInput
+            placeholder="Address"
+            cursorColor={theme.colors.primary}
+            style={[styles.userInput]}
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="address"
+          />
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(200).springify()}>
+          <TextInput />
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(300).springify()}>
@@ -139,42 +142,7 @@ const RegisterScreen = () => {
                 { fontSize: hp(2.8), color: theme.colors.white },
               ]}
             >
-              Register
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
-
-        <Animated.View
-          style={styles.orContainer}
-          entering={FadeIn.delay(300).springify()}
-        >
-          <View style={styles.separator}></View>
-          <Text style={[styles.text, { fontSize: hp(2) }]}>Or</Text>
-          <View style={styles.separator}></View>
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(300).springify()}>
-          <TouchableOpacity style={styles.btn} onPress={signInWithGoogle}>
-            <View style={styles.imageContainer}>
-              <Image source={googleLogo} style={styles.googleLogo} />
-            </View>
-            <Text style={[styles.text, { fontSize: hp(2.6) }]}>
-              Continue with Google
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
-
-        <Animated.View
-          style={styles.linkContainer}
-          entering={FadeInDown.delay(400).springify()}
-        >
-          <TouchableOpacity onPress={() => router.push("signin")}>
-            <Text style={[styles.text, styles.linkText]}>Sign In</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-            <Text style={[styles.text, styles.linkText]}>
-              Forgot Password ?
+              Save
             </Text>
           </TouchableOpacity>
         </Animated.View>
@@ -279,4 +247,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default KnowYouScreen;

@@ -23,6 +23,13 @@ const Layout = () => {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="register/knowyou"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };
