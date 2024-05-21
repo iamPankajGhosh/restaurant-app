@@ -16,6 +16,13 @@ const Layout = () => {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="register/index"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };
