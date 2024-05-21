@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { useRouter } from "expo-router";
 import {
   GoogleSignin,
   statusCodes,
@@ -18,6 +19,7 @@ import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import footerBanner from "../../assets/images/footer-banner.png";
 
 const SignInScreen = () => {
+  const router = useRouter();
   const [error, setError] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
 
@@ -93,6 +95,11 @@ const SignInScreen = () => {
             placeholder="Email"
             cursorColor={theme.colors.primary}
             style={[styles.userInput]}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="emailAddress"
+            autoComplete="email"
           />
         </Animated.View>
         <Animated.View entering={FadeInDown.delay(200).springify()}>
@@ -100,6 +107,8 @@ const SignInScreen = () => {
             placeholder="Password"
             cursorColor={theme.colors.primary}
             style={[styles.userInput]}
+            secureTextEntry={true}
+            textContentType="password"
           />
         </Animated.View>
 
@@ -146,7 +155,7 @@ const SignInScreen = () => {
           style={styles.linkContainer}
           entering={FadeInDown.delay(400).springify()}
         >
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("register")}>
             <Text style={[styles.text, styles.linkText]}>Register</Text>
           </TouchableOpacity>
 
