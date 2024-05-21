@@ -40,7 +40,7 @@ const WelcomeScreen = () => {
           </Animated.Text>
           <Animated.View entering={FadeInDown.delay(600).springify()}>
             <Pressable
-              onPress={() => router.push("home")}
+              onPress={() => router.push("signin")}
               style={styles.startButton}
             >
               <Text style={styles.startText}>Get Started</Text>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   startButton: {
     marginBottom: 50,
-    backgroundColor: theme.colors.neutral(0.9),
+    backgroundColor: theme.colors.primary,
     padding: 15,
     paddingHorizontal: 90,
     borderRadius: theme.redius.xl,
