@@ -41,7 +41,7 @@ const KnowYouScreen = () => {
 
   //sign in with email
   const signInWithEmail = async () => {
-    router.push("register/knowyou");
+    router.push("home");
   };
 
   // sign in with google
