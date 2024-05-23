@@ -17,11 +17,20 @@ import { theme } from "../../constants/theme.js";
 import { hp, wp } from "../../helpers/common.js";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import footerBanner from "../../assets/images/footer-banner.png";
+import axios from "axios";
 
 const SignInScreen = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const userDetails = {
+    email: email,
+    password: password,
+  };
 
   const configGoogleSignIn = async () => {
     try {
@@ -39,8 +48,34 @@ const SignInScreen = () => {
     configGoogleSignIn();
   }, []);
 
+  const restData = () => {
+    setEmail("");
+    setPassword("");
+  };
+
   //sign in with email
-  const signInWithEmail = async () => {};
+  const signInWithEmail = async () => {
+    try {
+      setIsLoading(true);
+
+      const res = await axios.post(
+        `https://swaad-restaurant.vercel.app/api/v1/users/login`,
+        userDetails
+      );
+      console.log(res.data);
+
+      restData();
+
+      setIsLoading(false);
+
+      router.push("home");
+    } catch (e) {
+      console.log("Error :: register user", e);
+      restData();
+
+      setIsLoading(false);
+    }
+  };
 
   // sign in with google
   const signInWithGoogle = async () => {
@@ -51,6 +86,14 @@ const SignInScreen = () => {
       });
       const userInfo = await GoogleSignin.signIn();
       setUserInfo(userInfo);
+
+      setEmail(userInfo.user.email);
+      setPassword(userInfo.user.id);
+
+      signInWithEmail();
+
+      router.push("home");
+
       setError(null);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -100,6 +143,8 @@ const SignInScreen = () => {
             autoCorrect={false}
             textContentType="emailAddress"
             autoComplete="email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
           />
         </Animated.View>
         <Animated.View entering={FadeInDown.delay(200).springify()}>
@@ -109,6 +154,8 @@ const SignInScreen = () => {
             style={[styles.userInput]}
             secureTextEntry={true}
             textContentType="password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
           />
         </Animated.View>
 
@@ -126,7 +173,7 @@ const SignInScreen = () => {
                 { fontSize: hp(2.8), color: theme.colors.white },
               ]}
             >
-              Sign in
+              {!isLoading ? "Sign in" : "Loading..."}
             </Text>
           </TouchableOpacity>
         </Animated.View>
