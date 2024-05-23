@@ -12,16 +12,48 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { useEffect, useState } from "react";
-import googleLogo from "../../assets/images/google-logo.png";
 import { theme } from "../../constants/theme.js";
 import { hp, wp } from "../../helpers/common.js";
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import footerBanner from "../../assets/images/footer-banner.png";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const KnowYouScreen = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("user");
+
+      const user = jsonValue != null ? JSON.parse(jsonValue) : null;
+
+      setName(user.name);
+      setEmail(user.email);
+      setPassword(user.id);
+    } catch (e) {
+      console.log("Error :: retrive storage data", e);
+    }
+  };
+
+  const userDetails = {
+    email: email,
+    phoneNumber: phoneNumber,
+    password: password,
+  };
+
+  const restData = () => {
+    setEmail("");
+    setPhoneNumber("");
+    setPassword("");
+  };
 
   const configGoogleSignIn = async () => {
     try {
@@ -37,11 +69,31 @@ const KnowYouScreen = () => {
 
   useEffect(() => {
     configGoogleSignIn();
+    getData();
   }, []);
 
   //sign in with email
-  const signInWithEmail = async () => {
-    router.push("home");
+  const registerWithEmail = async () => {
+    try {
+      setIsLoading(true);
+
+      const res = await axios.post(
+        `https://swaad-restaurant.vercel.app/api/v1/users/register`,
+        userDetails
+      );
+      console.log(res.data);
+
+      restData();
+
+      setIsLoading(false);
+
+      router.push("home");
+    } catch (e) {
+      console.log("Error :: register user", e);
+      restData();
+
+      setIsLoading(false);
+    }
   };
 
   // sign in with google
@@ -100,6 +152,8 @@ const KnowYouScreen = () => {
             autoCapitalize="none"
             autoCorrect={false}
             textContentType="name"
+            value={name}
+            onChangeText={(text) => setName(text)}
           />
         </Animated.View>
 
@@ -110,12 +164,14 @@ const KnowYouScreen = () => {
             style={[styles.userInput]}
             keyboardType="phone-pad"
             textContentType="telephoneNumber"
+            value={phoneNumber}
+            onChangeText={(text) => setPhoneNumber(text)}
           />
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(200).springify()}>
           <TextInput
-            placeholder="Address"
+            placeholder="Address (optional)"
             cursorColor={theme.colors.primary}
             style={[styles.userInput]}
             autoCapitalize="none"
@@ -124,17 +180,13 @@ const KnowYouScreen = () => {
           />
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(200).springify()}>
-          <TextInput />
-        </Animated.View>
-
         <Animated.View entering={FadeInDown.delay(300).springify()}>
           <TouchableOpacity
             style={[
               styles.btn,
               { backgroundColor: theme.colors.primary, marginTop: hp(2) },
             ]}
-            onPress={signInWithEmail}
+            onPress={registerWithEmail}
           >
             <Text
               style={[
@@ -142,7 +194,7 @@ const KnowYouScreen = () => {
                 { fontSize: hp(2.8), color: theme.colors.white },
               ]}
             >
-              Save
+              {!isLoading ? "Save" : "Loading..."}
             </Text>
           </TouchableOpacity>
         </Animated.View>

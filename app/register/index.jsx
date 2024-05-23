@@ -17,11 +17,32 @@ import { theme } from "../../constants/theme.js";
 import { hp, wp } from "../../helpers/common.js";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import footerBanner from "../../assets/images/footer-banner.png";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RegisterScreen = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const userDetails = {
+    email: email,
+    phoneNumber: phoneNumber,
+    password: password,
+  };
+
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("user", jsonValue);
+    } catch (e) {
+      console.log("Error :: storeData", e);
+    }
+  };
 
   const configGoogleSignIn = async () => {
     try {
@@ -39,9 +60,34 @@ const RegisterScreen = () => {
     configGoogleSignIn();
   }, []);
 
+  const restData = () => {
+    setEmail("");
+    setPhoneNumber("");
+    setPassword("");
+  };
+
   //sign in with email
-  const signInWithEmail = async () => {
-    router.push("register/knowyou");
+  const registerWithEmail = async () => {
+    try {
+      setIsLoading(true);
+
+      const res = await axios.post(
+        `https://swaad-restaurant.vercel.app/api/v1/users/register`,
+        userDetails
+      );
+      console.log(res.data);
+
+      restData();
+
+      setIsLoading(false);
+
+      router.push("home");
+    } catch (e) {
+      console.log("Error :: register user", e);
+      restData();
+
+      setIsLoading(false);
+    }
   };
 
   // sign in with google
@@ -53,6 +99,12 @@ const RegisterScreen = () => {
       });
       const userInfo = await GoogleSignin.signIn();
       setUserInfo(userInfo);
+      console.log(userInfo.user);
+
+      storeData(userInfo.user);
+
+      router.push("register/knowyou");
+
       setError(null);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -102,16 +154,8 @@ const RegisterScreen = () => {
             autoCorrect={false}
             textContentType="emailAddress"
             autoComplete="email"
-          />
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(200).springify()}>
-          <TextInput
-            placeholder="Password"
-            cursorColor={theme.colors.primary}
-            style={[styles.userInput]}
-            secureTextEntry={true}
-            textContentType="password"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
           />
         </Animated.View>
 
@@ -122,6 +166,20 @@ const RegisterScreen = () => {
             style={[styles.userInput]}
             keyboardType="phone-pad"
             textContentType="telephoneNumber"
+            value={phoneNumber}
+            onChangeText={(text) => setPhoneNumber(text)}
+          />
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(200).springify()}>
+          <TextInput
+            placeholder="Password"
+            cursorColor={theme.colors.primary}
+            style={[styles.userInput]}
+            secureTextEntry={true}
+            textContentType="password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
           />
         </Animated.View>
 
@@ -131,7 +189,7 @@ const RegisterScreen = () => {
               styles.btn,
               { backgroundColor: theme.colors.primary, marginTop: hp(2) },
             ]}
-            onPress={signInWithEmail}
+            onPress={registerWithEmail}
           >
             <Text
               style={[
@@ -139,7 +197,7 @@ const RegisterScreen = () => {
                 { fontSize: hp(2.8), color: theme.colors.white },
               ]}
             >
-              Register
+              {!isLoading ? "Register" : "Loading..."}
             </Text>
           </TouchableOpacity>
         </Animated.View>
