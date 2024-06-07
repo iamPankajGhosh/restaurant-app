@@ -37,6 +37,13 @@ const Layout = () => {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="cart/index"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };

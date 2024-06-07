@@ -5,7 +5,6 @@ import {
   Pressable,
   ScrollView,
   TextInput,
-  Image,
   TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,6 +14,7 @@ import { theme } from "../../constants/theme.js";
 import { useRef, useState } from "react";
 import Catagories from "../../components/Catagories.jsx";
 import MenuItems from "../../components/MenuItems.jsx";
+import { router } from "expo-router";
 
 const HomeScreen = () => {
   const { top } = useSafeAreaInsets();
@@ -35,15 +35,20 @@ const HomeScreen = () => {
           <Text style={styles.title}>Swaad</Text>
         </Pressable>
 
-        <TouchableOpacity>
-          <View style={styles.profileBanner}>
-            <Image source={""} style={styles.profileImage} />
-            <Text style={styles.profileText}></Text>
-          </View>
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+          <TouchableOpacity onPress={() => router.push("cart")}>
+            <Ionicons name="cart" size={24} color="black" />
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <View style={styles.profileBanner}>
+              <Text style={styles.profileText}>P</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView contentContainerStyle={{ gap: 15 }}>
+      <ScrollView contentContainerStyle={{ gap: 15, marginBottom: wp(10) }}>
         <View style={styles.searchbar}>
           <View style={styles.searchIcon}>
             <Feather
@@ -75,9 +80,9 @@ const HomeScreen = () => {
             handleChangeCatagory={handleChangeCatagory}
           />
         </View>
-
-        <MenuItems />
       </ScrollView>
+
+      <MenuItems />
     </View>
   );
 };
@@ -99,12 +104,17 @@ const styles = StyleSheet.create({
     color: theme.colors.neutral(0.9),
   },
   profileBanner: {
-    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: theme.colors.white,
     width: wp(8),
     height: wp(8),
     borderRadius: 50,
+  },
+  profileText: {
+    fontSize: hp(3),
+    fontWeight: theme.fontWeights.medium,
+    color: theme.colors.primary,
   },
   searchbar: {
     marginHorizontal: wp(4),
