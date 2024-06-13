@@ -66,7 +66,7 @@ const RegisterScreen = () => {
     setPassword("");
   };
 
-  //sign in with email
+  //register with email
   const registerWithEmail = async () => {
     try {
       setIsLoading(true);
@@ -76,6 +76,8 @@ const RegisterScreen = () => {
         userDetails
       );
       console.log(res.data);
+
+      storeData(res.data);
 
       restData();
 
